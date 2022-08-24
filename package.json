@@ -21,6 +21,8 @@
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
     "@maplibre/ngx-maplibre-gl": "^13.0.0",
+    "@types/geojson": "^7946.0.10",
+    "@types/maplibre-gl": "^1.14.0",
     "bootstrap": "4.6",
     "jquery": "^3.6.0",
     "maplibre-gl": "^2.3.0",

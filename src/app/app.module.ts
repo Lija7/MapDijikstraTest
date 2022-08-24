@@ -7,10 +7,14 @@ import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NavbarComponent } from './NavBar/navbar/navbar.component';
+import { MapaComponent } from './Mapa/mapa.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NavbarComponent,
+    MapaComponent
   ],
   imports: [
     BrowserModule,
