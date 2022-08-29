@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
-import { Map, NavigationControl, Marker, ScaleControl, Popup, Offset } from 'maplibre-gl';
-import { sample } from 'rxjs';
+import { Map, NavigationControl, Marker, ScaleControl, Popup, Offset, GeolocateControl } from 'maplibre-gl';
+import { map, sample } from 'rxjs';
 
 @Component({
   selector: 'app-mapa',
@@ -21,15 +21,16 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     const initialState = { lng: 20.4572, lat: 44.7871, zoom: 10 };
+    const kljuc = '1SGD9lbvzzGhx1JEsjnr';
 
     this.map = new Map({
       container: this.mapContainer.nativeElement,
-      style: `https://api.maptiler.com/maps/streets/style.json?key=1SGD9lbvzzGhx1JEsjnr`,
+      style: `https://api.maptiler.com/maps/streets/style.json?key=${kljuc}`,
       center: [initialState.lng, initialState.lat],
       zoom: initialState.zoom
     });
 
-    this.map.addControl(new NavigationControl({}), 'top-right');
+    this.map.addControl(new NavigationControl({}), 'top-left');
 
    var marker = new Marker({ color: "#FF0000", draggable:true })
       .setLngLat([20.4036, 44.8204])
@@ -47,6 +48,8 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.map.addControl(scale, 'bottom-right');
+
+    
 
   }
 
