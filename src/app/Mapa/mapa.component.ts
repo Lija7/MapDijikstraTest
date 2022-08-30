@@ -123,6 +123,8 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
       this.map.easeTo({
         center: [long, lat],
         zoom: 15,
+        duration: 1500
+
       })
   }
 
