@@ -119,6 +119,11 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
       var marker2 = new Marker({ color: "#FF0000", draggable:true })
       .setLngLat([long, lat])
       .addTo(this.map);
+
+      this.map.easeTo({
+        center: [long, lat],
+        zoom: 15,
+      })
   }
 
   displayPlace(option: Mesto): string {
