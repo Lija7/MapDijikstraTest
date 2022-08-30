@@ -1,3 +1,34 @@
+<div class="row heading" style="width: 100%; overflow: hidden !important;;">
+    <div class="col-md-4"></div>
+    <div class="col-md-3 mt-2">
+      <h1>LOVIGATE</h1>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-3 smPolja mt-2">
+      <!-- <mat-form-field class="example-form-field" appearance="outline" style="width: 100%;">
+        <mat-label>Lokacija</mat-label>
+        <input matInput type="text" 
+               [formControl]="mesto" 
+               placeholder="Unesite željenu lokaciju"
+               (keyup.enter)="onEnter()"
+               [matAutocomplete]="auto">
+      </mat-form-field> -->
+      <mat-form-field class="example-full-width" appearance="outline"
+      style="width: 100%;">
+      <mat-label>Lokacija</mat-label>
+      <input type="text" placeholder="Unesite željenu lokaciju" matInput
+          [formControl]="mesto" [matAutocomplete]="auto" (keyup.enter)="onEnter()">
+      <mat-autocomplete #auto="matAutocomplete"
+          (optionSelected)='selectedPlace($event.option.value)'
+          [displayWith]="displayPlace">
+          <mat-option *ngFor="let option of popuniMesta | async" [value]="option">
+              {{option.naziv}}
+          </mat-option>
+      </mat-autocomplete>
+  </mat-form-field>
+    </div>
+  
+  </div>
 <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>
