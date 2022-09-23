@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Map, NavigationControl, Marker, ScaleControl } from 'maplibre-gl';
+import { Map, NavigationControl, Marker, ScaleControl, GeolocateControl } from 'maplibre-gl';
 import { Observable, startWith } from 'rxjs';
 import { map, sample } from 'rxjs';
 import { Mesto } from '../Model/Mesto.model';
 import { MapeService } from './mape.service';
+import MapLibreGlDirections, { LoadingIndicatorControl } from "@maplibre/maplibre-gl-directions";
 
 @Component({
   selector: 'app-mapa',
@@ -36,6 +37,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     const pocetnaLokacija = { lng: 20.4572, lat: 44.7871, zoom: 10 };
     const kljuc = '1SGD9lbvzzGhx1JEsjnr';
 
+
     this.map = new Map({
       container: this.mapContainer.nativeElement,
       style: `https://api.maptiler.com/maps/streets/style.json?key=${kljuc}`,
@@ -44,7 +46,8 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.map.addControl(new NavigationControl({}), 'top-left');
-
+    this.map.addControl(new GeolocateControl({}), 'top-right');
+  
     // prikaz markera 
     var marker = new Marker({ color: "#FF0000", draggable: true })
       .setLngLat([20.4036, 44.8204])
@@ -64,6 +67,18 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.map.addControl(scale, 'bottom-right');
+
+    // this.map.on('load', ()=>{
+    //   const directions = new MapLibreGlDirections(this.map);
+
+    //   directions.interactive = true;
+
+    //   this.map.addControl(new LoadingIndicatorControl(directions));
+    //   directions.setWaypoints([
+    //     [20.4036, 44.8204],
+    //     [20.4591, 44.8238],
+    //   ]);
+    // })
 
   }
 
@@ -116,9 +131,11 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedPlace(event) {
     console.log(event)
 
-    const pocetnaLokacija = [20.4036, 44.8204];
+    this.nizKoordinata2Markera = []
+    const pocetnaLokacija : [number, number] = [20.4036, 44.8204];
 
-
+    const directions = new MapLibreGlDirections(this.map);
+    
     console.log(this.listaSvihLokacija)
 
     this.listaSvihLokacija.forEach(element => {
@@ -127,33 +144,45 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
         this.nizKoordinata2Markera.push(event.koordinate)
         console.log("LOKACIJE")
         console.log(this.nizKoordinata2Markera)
-        // console.log(element)
-        this.map.addSource('route', {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: this.nizKoordinata2Markera
-            }
-          }
-        })
 
-        this.map.addLayer({
-          id: 'route',
-          type: 'line',
-          source: 'route',
-          layout: {
-            "line-join": 'round',
-            'line-cap': 'round'
-          },
-          paint: {
-            "line-color": '#888',
-            "line-width": 8
-          }
-        })
+        
+
+        directions.interactive = true;
+  
+        this.map.addControl(new LoadingIndicatorControl(directions));
+        directions.setWaypoints([
+          pocetnaLokacija,
+          event.koordinate,
+        ]);
+
+        // console.log(element)
+        // this.map.addSource('route' + event.koordinate[0], {
+        //   type: 'geojson',
+        //   data: {
+        //     type: 'Feature',
+        //     properties: {},
+        //     geometry: {
+        //       type: 'LineString',
+        //       coordinates: this.nizKoordinata2Markera
+        //     }
+        //   }
+        // })
+
+        // this.map.addLayer({
+        //   id: 'route'+ event.koordinate[0],
+        //   type: 'line',
+        //   source: 'route' + event.koordinate[0],
+        //   layout: {
+        //     "line-join": 'round',
+        //     'line-cap': 'round'
+        //   },
+        //   paint: {
+        //     "line-color": '#888',
+        //     "line-width": 8
+        //   }
+        // })
       }
+
 
 
     });
