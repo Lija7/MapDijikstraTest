@@ -2,10 +2,13 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } fr
 import { FormControl } from '@angular/forms';
 import { Map, NavigationControl, Marker, ScaleControl, GeolocateControl } from 'maplibre-gl';
 import { Observable, startWith } from 'rxjs';
-import { map, sample } from 'rxjs';
+import { map } from 'rxjs';
 import { Mesto } from '../Model/Mesto.model';
 import { MapeService } from './mape.service';
 import MapLibreGlDirections, { LoadingIndicatorControl } from "@maplibre/maplibre-gl-directions";
+import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
+import maplibregl from "maplibre-gl";
+
 
 @Component({
   selector: 'app-mapa',
@@ -14,7 +17,7 @@ import MapLibreGlDirections, { LoadingIndicatorControl } from "@maplibre/maplibr
 })
 export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  map: Map | undefined;
+  map: Map | any | undefined;
 
   mesto = new FormControl('');
 
@@ -28,6 +31,10 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
   listaSvihLokacija: Array<any>;
   nizKoordinata2Markera: Array<any> = [];
 
+  wayPoints: [number,number][] = [];
+  pocetak: [number, number] = [20.403737,44.820337]
+  kraj: [number, number] = [20.403547,44.820475]
+
   constructor(private serviceMapa: MapeService) { }
 
   ngOnInit(): void {
@@ -38,7 +45,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     const kljuc = '1SGD9lbvzzGhx1JEsjnr';
 
 
-    this.map = new Map({
+    this.map = new maplibregl.Map({
       container: this.mapContainer.nativeElement,
       style: `https://api.maptiler.com/maps/streets/style.json?key=${kljuc}`,
       center: [pocetnaLokacija.lng, pocetnaLokacija.lat],
@@ -46,10 +53,45 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.map.addControl(new NavigationControl({}), 'top-left');
+    
+    const gc = new GeocodingControl({apiKey: kljuc, enableReverse: true, country:'rs', reverseButtonTitle: 'Odaberi lokaciju na mapi', marker: true,  minLength: 4, showFullGeometry: true, placeholder: 'Lokacija'});
+    gc.addEventListener("pick", (se:any)=> {
+      // console.log(se.detail.center)
+
+      // directions.interactive = true;
+      const pocetak: [number, number] = [pocetnaLokacija.lng, pocetnaLokacija.lat]
+
+
+    if(se.detail !!){
+      if (this.wayPoints.find(([k]) => k === se.detail.center[0])){
+        console.log("LOKACIJA JE VEC LISTI!");
+      }
+      else{
+        this.wayPoints.push(se.detail.center)
+      }
+    }
+    else{
+      this.wayPoints = this.wayPoints
+    }
+
+
+      console.log("Sve lokacije: ", this.wayPoints)
+  
+        // this.map.addControl(new LoadingIndicatorControl(this.directions));
+        // directions.clear();
+        // directions.setWaypoints(
+        //   wayPoints
+        // );
+        // this.directions.waypoints.push(se.detail.center)
+
+
+    })
+    this.map.addControl(gc, 'top-right');
     this.map.addControl(new GeolocateControl({}), 'top-right');
+
   
     // prikaz markera 
-    var marker = new Marker({ color: "#FF0000", draggable: true })
+    var marker = new Marker({ color: "#FF0000", draggable: true})
       .setLngLat([20.4036, 44.8204])
       .addTo(this.map);
 
@@ -208,6 +250,18 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   displayPlace(option: Mesto): string {
     return option && option.naziv ? option.naziv : '';
+  }
+
+  pretraziLokacije(){
+    const directions = new MapLibreGlDirections(this.map);
+    directions.interactive = true;
+
+    this.wayPoints.unshift(this.pocetak);
+    this.wayPoints.push(this.kraj);
+    console.log("KONACNE LOKCIJE: ", this.wayPoints)
+    this.map.addControl(new LoadingIndicatorControl(directions));
+        directions.setWaypoints(this.wayPoints);
+
   }
 
 }
