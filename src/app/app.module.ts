@@ -6,6 +6,8 @@ import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
 import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatTableModule} from '@angular/material/table';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -14,12 +16,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './NavBar/navbar/navbar.component';
 import { MapaComponent } from './Mapa/mapa.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ListaLokacijaComponent } from './ListaLokacija/lista-lokacija.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    MapaComponent
+    MapaComponent,
+    ListaLokacijaComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +35,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatInputModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

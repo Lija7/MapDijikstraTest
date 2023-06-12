@@ -1,0 +1,55 @@
+<h1 mat-dialog-title> Lista dodatih lokacija </h1>
+<div mat-dialog-content class="smPolja">
+    <!-- <ul>
+        <div *ngFor="let l of data.lista; index as i;">
+            <li (click)="data.lista.splice(i, 1)">
+                {{l.koordinate}} - {{l.naziv}}
+            </li>
+        </div>
+    </ul> -->
+    <!-- <p>
+        +++++++++++++++++++++++++++++++++
+    </p>
+    <ul>
+        <div *ngFor="let m of data.markeri; index as i;">
+            <li>
+                {{m}}
+            </li>
+        </div>
+    </ul> -->
+   
+
+
+
+<!--TABELA za listu lokacija-->
+<div class="row justify-content-center">
+    <div class="col-md-12">
+
+        <div class="example-container mat-elevation-z8">
+            <table mat-table [dataSource]="dataSourceListaLokacija" class="example-container mat-elevation-z8">
+
+                <ng-container matColumnDef="naziv">
+                    <th mat-header-cell *matHeaderCellDef> Naziv lokacije </th>
+                    <td mat-cell *matCellDef="let detalj"> {{detalj.naziv}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="opcije">
+                    <th mat-header-cell *matHeaderCellDef> Brisanje </th>
+                    <td mat-cell *matCellDef="let detalj; index as i"> {{detalj.opije | number:'.2-4' : 'sr-RS'}} 
+                        <a (click)="obrisiLokaciju(detalj, i)" title="Obriši lokaciju"><i class="far fa-trash-alt fa-xl ml-2" style="color: red;"></i></a>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<div mat-dialog-actions align="end">
+    <button mat-raised-button color="warn" (click)="onNoClick()">Zatvori</button>
+    <button mat-button (click)="potvrdiUnos()" style="background-color: #25bf0d; color: whitesmoke;">Potvrdi</button>
+</div>

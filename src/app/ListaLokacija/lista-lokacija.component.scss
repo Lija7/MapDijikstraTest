@@ -1,0 +1,51 @@
+.example-full-width {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+  }
+
+  tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+
+  .example-container {
+    max-height: 500px;
+    // max-height: calc((143.1vh - 200px) / 2); //bez skrola malog na pocetku 136.8 vh
+    overflow: auto;
+  }
+  
+  .mat-table {
+    overflow-x: scroll;
+  }
+
+//   .mat-row,
+//   .mat-header-row {
+//     display: table-row;
+//   }
+
+
+  .mat-cell,
+  .mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 10px;
+    line-break: unset;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+  }
+  .mat-row,
+  .mat-header-row {
+    display: table-row;
+  }
+
+  a :hover{
+    cursor: pointer;
+  }
