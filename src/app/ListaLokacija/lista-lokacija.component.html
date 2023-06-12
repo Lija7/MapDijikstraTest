@@ -33,12 +33,12 @@
                     <td mat-cell *matCellDef="let detalj"> {{detalj.naziv}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="opcije">
+                <!-- <ng-container matColumnDef="opcije">
                     <th mat-header-cell *matHeaderCellDef> Brisanje </th>
                     <td mat-cell *matCellDef="let detalj; index as i"> {{detalj.opije | number:'.2-4' : 'sr-RS'}} 
                         <a (click)="obrisiLokaciju(detalj, i)" title="Obriši lokaciju"><i class="far fa-trash-alt fa-xl ml-2" style="color: red;"></i></a>
                     </td>
-                </ng-container>
+                </ng-container> -->
 
                 <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
@@ -51,5 +51,5 @@
 
 <div mat-dialog-actions align="end">
     <button mat-raised-button color="warn" (click)="onNoClick()">Zatvori</button>
-    <button mat-button (click)="potvrdiUnos()" style="background-color: #25bf0d; color: whitesmoke;">Potvrdi</button>
+    <!-- <button mat-button (click)="potvrdiUnos()" style="background-color: #25bf0d; color: whitesmoke;">Potvrdi</button> -->
 </div>

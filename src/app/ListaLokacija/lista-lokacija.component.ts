@@ -12,7 +12,7 @@ export class ListaLokacijaComponent implements OnInit {
 
 
   dataSourceListaLokacija: MatTableDataSource<ListaLokacija>;
-  columnsToDisplay = ['naziv', 'opcije'];
+  columnsToDisplay = ['naziv'];
 
 
   constructor(private dialogRef: MatDialogRef<ListaLokacijaComponent>,
