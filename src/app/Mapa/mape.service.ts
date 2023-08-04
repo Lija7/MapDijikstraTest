@@ -15,4 +15,10 @@ export class MapeService {
     return this.http.get('https://api.maptiler.com/geocoding/[' + upit + '].json?key=' + kljuc + '&bbox=20.100859536071795,44.43653527256717,20.63544132443704,45.098673824457814 &proximity=' + proximity);
 
   }
+
+  obrnutiGeokoding(lng, lat): Observable<any>{
+    return this.http.get(`https://api.maptiler.com/geocoding/${lng},${lat}.json?key=1SGD9lbvzzGhx1JEsjnr`)
+  }
+
+
 }

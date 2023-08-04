@@ -12,7 +12,7 @@ export class ListaLokacijaComponent implements OnInit {
 
 
   dataSourceListaLokacija: MatTableDataSource<ListaLokacija>;
-  columnsToDisplay = ['naziv'];
+  columnsToDisplay = ['naziv', 'distanca'];
 
 
   constructor(private dialogRef: MatDialogRef<ListaLokacijaComponent>,
@@ -37,6 +37,10 @@ export class ListaLokacijaComponent implements OnInit {
     this.data.lista.splice(i ,1);
     this.dataSourceListaLokacija = new MatTableDataSource(this.data.lista)
 
+  }
+
+  getTotalCost(){
+    return this.data.lista.map(t => t.distanca).reduce((acc, value) => acc + value, 0);
   }
 
 }
