@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Map, NavigationControl, Marker, ScaleControl, GeolocateControl, Popup } from 'maplibre-gl';
+import { Map, NavigationControl, Marker, ScaleControl, GeolocateControl, Popup, LngLat } from 'maplibre-gl';
 import { Observable, startWith } from 'rxjs';
 import { map } from 'rxjs';
 import { Mesto } from '../Model/Mesto.model';
@@ -10,7 +10,6 @@ import { GeocodingControl } from "@maptiler/geocoding-control/maplibregl";
 import maplibregl from "maplibre-gl";
 import { ListaLokacijaComponent } from '../ListaLokacija/lista-lokacija.component';
 import { MatDialog } from '@angular/material/dialog';
-import * as turf from '@turf/turf'
 import { Route, Router } from '@angular/router';
 
 
@@ -60,7 +59,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
-  constructor(private serviceMapa: MapeService,
+  constructor(public serviceMapa: MapeService,
     public dialog: MatDialog,
     private router: Router) { }
 
@@ -77,7 +76,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
       center: [pocetnaLokacija.lng, pocetnaLokacija.lat],
       zoom: pocetnaLokacija.zoom
     });
-
+    var geolocate = new maplibregl.GeolocateControl({});
 
     this.map.addControl(new NavigationControl({}), 'top-left');
 
@@ -103,99 +102,104 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
           // this.wayPoints.push(se.detail.center)
 
+          //proverava se da li postoji geolocataions control
+          //ukoliko postoji onda se za prvi marker uzima njegova lokacija tj adresa i stavlja u listu lokacija na pocetak i kraj
+          if (geolocate._userLocationDotMarker._lngLat != null || geolocate._userLocationDotMarker._lngLat != undefined) {
+            alert("IMA GEOLOCATE")
+            console.log(geolocate._userLocationDotMarker._lngLat)
+            if (this.wayPoints.length == 0) {
+              this.wayPoints.unshift([geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat])
+              this.wayPoints.push([geolocate._userLocationDotMarker._lngLat.lng - 0.000003, geolocate._userLocationDotMarker._lngLat.lat + +0.00003])
 
-          if (this.wayPoints.length == 0) {
-            this.wayPoints.unshift(se.detail.center)
-            this.wayPoints.push([se.detail.center[0] - 0.000003, se.detail.center[1] + +0.00003])
+              this.serviceMapa.obrnutiGeokoding(geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat).subscribe(res => {
+                console.log("STA JE RES? TJ IME LOKACIJE MI DAJ COVECE: ", res.features[0].place_name_sr)
 
-            var lokacijaZaPrikaz = {
-              koordinate: se.detail.center,
-              naziv: se.detail.place_name_sr,
-              distanca: 0
+                var lokacijaZaPrikaz = {
+                  koordinate: [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any,
+                  naziv: res.features[0].place_name_sr,
+                  distanca: 0
+                }
+
+                this.listaLokacijaZaPrikaz.unshift(lokacijaZaPrikaz)
+                this.listaLokacijaZaPrikaz.push(lokacijaZaPrikaz)
+                
+
+              });
+
+
+
+
+
+            }
+            else {
+              this.wayPoints.splice(this.wayPoints.length - 1, 0, se.detail.center);
+              this.brojacLokacija += 1;
+
+
+              //prilikom dodavanja nove lokacije, proverava se da li je directions razlicito od undefined, tj dal postoji, ukoliko postoji
+              //postojeca ruta se updateuje za novu lokaciju
+              if (this.directions != undefined) {
+                this.directions.clear();
+                this.directions.destroy();
+                this.directions = undefined;
+
+                this.directions = new MapLibreGlDirections(this.map);
+                this.directions.interactive = false;
+
+                // this.wayPoints.unshift(this.pocetak);
+                // this.wayPoints.push(this.kraj);
+                console.log("KONACNE LOKCIJE: ", this.wayPoints)
+                this.map.addControl(new LoadingIndicatorControl(this.directions));
+                this.directions.setWaypoints(this.wayPoints);
+
+              }
+
+              // console.log("BROJAC: ", this.brojacLokacija)
+              // console.log("PRVA TACKA ZA RACUN: ", this.wayPoints[this.brojacLokacija-1])
+              // console.log("DRUGA TACKA ZA RACUN: ", this.wayPoints[this.brojacLokacija])
+
+              var lokacijaZaPrikaz = {
+                koordinate: se.detail.center,
+                naziv: se.detail.place_name_sr,
+                distanca: Number((getDistance(this.wayPoints[this.brojacLokacija - 2], this.wayPoints[this.brojacLokacija - 1])).toFixed(2))
+              }
+
+
+
+              this.listaLokacijaZaPrikaz.splice(this.listaLokacijaZaPrikaz.length - 1, 0, lokacijaZaPrikaz);
+
+              this.listaLokacijaZaPrikaz.pop();
+
+              var lokacijaZaPrikaz = {
+                koordinate: this.listaLokacijaZaPrikaz[0].koordinate,
+                naziv: this.listaLokacijaZaPrikaz[0].naziv,
+                distanca: Number((getDistance(this.listaLokacijaZaPrikaz[this.brojacLokacija - 1].koordinate, this.listaLokacijaZaPrikaz[0].koordinate)).toFixed(2))
+              }
+
+              console.log("NOVA POSLEDNJA TACKA: ", lokacijaZaPrikaz)
+
+              this.listaLokacijaZaPrikaz.push(lokacijaZaPrikaz)
+
+
+              console.log("NIZ TACAKA: ", this.listaLokacijaZaPrikaz)
+              console.log("PRVA TACKA ZA RACUN: ", this.listaLokacijaZaPrikaz[this.brojacLokacija - 1].koordinate)
+              console.log("DRUGA TACKA ZA RACUN: ", this.listaLokacijaZaPrikaz[0].koordinate)
+
+              console.log(this.wayPoints[this.brojacLokacija],)
+              console.log(this.wayPoints[this.brojacLokacija - 1])
+
+              console.log("LOKACIJA ZA PRIKAZ: ", lokacijaZaPrikaz)
+
+
             }
 
-            this.listaLokacijaZaPrikaz.unshift(lokacijaZaPrikaz)
-            this.listaLokacijaZaPrikaz.push(lokacijaZaPrikaz)
-
+            console.log("Koordinate: ", this.wayPoints)
           }
           else {
-            this.wayPoints.splice(this.wayPoints.length - 1, 0, se.detail.center);
-            this.brojacLokacija += 1;
-
-
-            //prilikom dodavanja nove lokacije, proverava se da li je directions razlicito od undefined, tj dal postoji, ukoliko postoji
-            //postojeca ruta se updateuje za novu lokaciju
-            if (this.directions != undefined) {
-              this.directions.clear();
-              this.directions.destroy();
-              this.directions = undefined;
-
-              this.directions = new MapLibreGlDirections(this.map);
-              this.directions.interactive = false;
-
-              // this.wayPoints.unshift(this.pocetak);
-              // this.wayPoints.push(this.kraj);
-              console.log("KONACNE LOKCIJE: ", this.wayPoints)
-              this.map.addControl(new LoadingIndicatorControl(this.directions));
-              this.directions.setWaypoints(this.wayPoints);
-
-            }
-
-            // console.log("BROJAC: ", this.brojacLokacija)
-            // console.log("PRVA TACKA ZA RACUN: ", this.wayPoints[this.brojacLokacija-1])
-            // console.log("DRUGA TACKA ZA RACUN: ", this.wayPoints[this.brojacLokacija])
-
-            var lokacijaZaPrikaz = {
-              koordinate: se.detail.center,
-              naziv: se.detail.place_name_sr,
-              distanca: Number((getDistance(this.wayPoints[this.brojacLokacija - 2], this.wayPoints[this.brojacLokacija - 1])).toFixed(2))
-            }
-
-
-
-            this.listaLokacijaZaPrikaz.splice(this.listaLokacijaZaPrikaz.length - 1, 0, lokacijaZaPrikaz);
-
-            this.listaLokacijaZaPrikaz.pop();
-
-            var lokacijaZaPrikaz = {
-              koordinate: this.listaLokacijaZaPrikaz[0].koordinate,
-              naziv: this.listaLokacijaZaPrikaz[0].naziv,
-              distanca: Number((getDistance(this.listaLokacijaZaPrikaz[this.brojacLokacija - 1].koordinate, this.listaLokacijaZaPrikaz[0].koordinate)).toFixed(2))
-            }
-
-            console.log("NOVA POSLEDNJA TACKA: ", lokacijaZaPrikaz)
-
-            this.listaLokacijaZaPrikaz.push(lokacijaZaPrikaz)
-
-
-            console.log("NIZ TACAKA: ", this.listaLokacijaZaPrikaz)
-            console.log("PRVA TACKA ZA RACUN: ", this.listaLokacijaZaPrikaz[this.brojacLokacija - 1].koordinate)
-            console.log("DRUGA TACKA ZA RACUN: ", this.listaLokacijaZaPrikaz[0].koordinate)
-
-            console.log(this.wayPoints[this.brojacLokacija],)
-            console.log(this.wayPoints[this.brojacLokacija - 1])
-
-            console.log("LOKACIJA ZA PRIKAZ: ", lokacijaZaPrikaz)
-
-
+            alert("NEMA GEOLOCATE")
           }
 
-          console.log("Koordinate: ", this.wayPoints)
-
-
-          // console.log("Sta sve u sebi ima se: ", se.detail.place_name_sr)
-
-          // this.brojac += 1;
-          // var imePromenjive = 'markerListe' + this.brojac as any
-          // var popup = new Popup({ offset: 25 }).setText(
-          //   "Naziv lokacije: " + se.detail.place_name_sr + " \n\n\n " +
-          //   "\nKoordinate lokacije: " + se.detail.center
-          // );
-
-          // var oneMarker = new Marker({ color: "#FF0000", draggable: false })
-          //   .setLngLat(se.detail.center)
-          //   .setPopup(popup)
-          //   .addTo(this.map);
+          //********************************************************************************
           var linkMarkera = '';
           var noviMarker = document.createElement('div');
           noviMarker.className = 'marker';
@@ -316,67 +320,120 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
       console.log("Sve lokacije: ", this.wayPoints)
 
-      // this.map.addControl(new LoadingIndicatorControl(this.directions));
-      // directions.clear();
-      // directions.setWaypoints(
-      //   wayPoints
-      // );
-      // this.directions.waypoints.push(se.detail.center)
-
 
     })
     this.map.addControl(gc, 'top-right');
 
-    var geolocate = new maplibregl.GeolocateControl({});
-    
-
     this.map.addControl(geolocate, 'top-right');
-    
-    
-    geolocate.on('geolocate', function(e) {
+
+    var pomocniSerivs = this.serviceMapa
+    //dodagadjaj dodavanja geolocate controla na mapu
+    geolocate.on('geolocate', function (e) {
       var lon = e.coords.longitude;
       var lat = e.coords.latitude
       var position = [lon, lat];
-      console.log("Pozicija geolocatea: ", position);
+      console.log("Pozicija geolocatea: ", e.target._userLocationDotMarker._lngLat);
 
-     
-});
+      //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    // prikaz markera 
-    // var marker = new Marker({ color: "green", draggable: true })
-    //   .setLngLat([20.4036, 44.8204])
-    //   .addTo(this.map);
+      //dodaje se kod da se na lokaciju geolocate controlla doda pocetni marker i da se za taj marker napravi popup
+      //takodje u listu lokacija i u waypoints na pocetak i kraj ubacije se lokacija geolocate controla
+      // var linkMarkera = 'url(https://cdn-icons-png.flaticon.com/512/1865/1865269.png)'
+      // var noviMarker = document.createElement('div');
+      //     noviMarker.className = 'marker';
 
-    // var lngLat = marker.getLngLat();
-    // console.log(lngLat)
+      // var nesto = new maplibregl.Marker().setLngLat(position as [number, number])
 
-    // // kada se prevuce marker 
-    // marker.on('dragend', function () {
-    //   console.log(marker.getLngLat())
-    // })
+      // pomocniSerivs.obrnutiGeokoding().subscribe(res=>{
+      //   let geokoder = res['features'][0]['geometry']['coordinates']
+      //   console.log("DAL MOZE I OVAKO MOZDA? ", geokoder)
+
+
+      //   noviMarker.style.backgroundImage = linkMarkera;
+      //   noviMarker.style.backgroundSize = 'cover';
+      //   noviMarker.style.width = '40px';
+      //   noviMarker.style.height = '40px';
+
+      //   var popup = new Popup({ offset: 25 }).setText(
+      //     "Naziv lokacije: " + res.features[0].place_name_sr + " \n\n\n " +
+      //     "\nKoordinate lokacije: " + position
+      //   );
+      //   popup.setHTML("Naziv lokacije: " + res.features[0].place_name_sr + " \n\n\n " +
+      //     "\nKoordinate lokacije: " + position);
+
+      //   // Add the marker to the map
+       
+      //   var oneMarker = new Marker(noviMarker)
+      //   .setLngLat(this.position)
+      //   .addTo(this.map)
+      //   .setPopup(popup)
+
+      //     this.listaMarkera.push(oneMarker);
+      //     console.log("PODACI MARKERA: ", this.listaMarkera)
+
+      //     //KADA JE MOBILNI PRIKAZ ONDA TREBA DUZE ZADRZATI KLIK I ONDA PUSTITI
+      //     //KADA JE MOBILNI PRIKAZ ONDA TREBA DUZE ZADRZATI KLIK I ONDA PUSTITI
+      //     noviMarker.addEventListener('contextmenu', (ma: any) => {
+      //       // Handle the marker click event
+      //       // console.log(this.wayPoints[0][0])
+      //       // console.log(oneMarker._lngLat.lng)
+      //       if (this.wayPoints[0][0] == oneMarker._lngLat.lng) {
+      //         alert("Nije dozvoljeno brisanje pocetne lokacije!")
+      //         return;
+      //       }
+      //       else {
+
+      //         var markerForRemove = this.listaMarkera.indexOf(oneMarker, 0)
+      //         console.log('MARKER ZA BRISANJE: ', markerForRemove)
+      //         console.log(this.wayPoints)
+
+      //         oneMarker.remove()
+      //         // this.wayPoints.splice(markerForRemove + 1, 1); stari nacin brisanja
+
+      //         //novi nacin uklanjanja markera iz liste wayPoints
+      //         console.log('Marker za brisanje: ', oneMarker._lngLat.lng)
+      //         this.wayPoints = this.wayPoints.filter(function (item) { return item[0] != oneMarker._lngLat.lng })
+
+      //         //brisanje lokacije markera iz liste za pregled unetih lokacija
+      //         if (this.listaLokacijaZaPrikaz.length > 0)
+      //           this.listaLokacijaZaPrikaz = this.listaLokacijaZaPrikaz.filter(function (item) { return item.koordinate[0] != oneMarker._lngLat.lng })
+
+      //         // this.map.addControl(new LoadingIndicatorControl(this.directions));
+      //         // this.directions.removeWaypoint(markerForRemove + 1);
+
+      //       }
+
+
+
+
+
+      //     });
+
+
+      //     noviMarker.addEventListener('mouseenter', (ma: any) => {
+      //       noviMarker.classList.add('hover');
+      //       popup.addTo(this.map);
+      //     });
+
+      //     // Hide the popup when the mouse leaves the marker
+      //     noviMarker.addEventListener('mouseleave', (ma: any) => {
+      //       noviMarker.classList.remove('hover');
+      //       popup.remove();
+      //     });
+
+
+      // })
+
+
+    });
 
     var scale = new ScaleControl({
       maxWidth: 80,
       unit: 'metric'
     });
-             
+
 
     this.map.addControl(scale, 'bottom-right');
-
-    // this.map.on('load', ()=>{
-
-
-    //   // const directions = new MapLibreGlDirections(this.map);
-
-    //   // directions.interactive = true;
-
-    //   // this.map.addControl(new LoadingIndicatorControl(directions));
-    //   // directions.setWaypoints([
-    //   //   [20.4036, 44.8204],
-    //   //   [20.4591, 44.8238],
-    //   // ]);
-    // })
-
   }
 
   ngOnDestroy(): void {
