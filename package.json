@@ -23,6 +23,7 @@
     "@maplibre/maplibre-gl-directions": "^0.2.5",
     "@maplibre/ngx-maplibre-gl": "^13.0.0",
     "@maptiler/geocoding-control": "^0.0.89",
+    "@turf/turf": "^6.5.0",
     "@types/geojson": "^7946.0.10",
     "@types/maplibre-gl": "^1.14.0",
     "bootstrap": "4.6",
