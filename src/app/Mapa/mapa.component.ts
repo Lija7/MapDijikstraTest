@@ -453,7 +453,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
               console.log("III")
               if (this.wayPoints[0][0] == oneMarker._lngLat.lng) {
-                alert("Nije dozvoljeno brisanje pocetne lokacije!")
+                alert("Nije dozvoljeno brisanje početne lokacije!")
                 return;
               }
               else {
