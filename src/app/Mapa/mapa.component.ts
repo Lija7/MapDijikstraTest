@@ -11,6 +11,7 @@ import maplibregl from "maplibre-gl";
 import { ListaLokacijaComponent } from '../ListaLokacija/lista-lokacija.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Route, Router } from '@angular/router';
+import  SerbianLatinCyrillicTranslateration from 'serbian-latin-cyrillic-transliteration'
 
 
 // export class ListaLokacija {
@@ -162,7 +163,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
                 noviMarker.style.height = '40px';
 
                 var popup = new Popup({ offset: 25 }).setText(
-                  "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + + res.features[0].place_name_sr + " \n\n\n " +
+                  "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + res.features[0].place_name_sr + " \n\n\n " +
                   "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any
                 );
                 popup.setHTML("<span style='font-weight: bold; font-size: 14px'> Naziv lokacije: </span> <br>" + res.features[0].place_name_sr + " \n\n\n " +
