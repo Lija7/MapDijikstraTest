@@ -162,11 +162,11 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
                 noviMarker.style.height = '40px';
 
                 var popup = new Popup({ offset: 25 }).setText(
-                  "Naziv lokacije: " + res.features[0].place_name_sr + " \n\n\n " +
-                  "\nKoordinate lokacije: " + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any
+                  "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + + res.features[0].place_name_sr + " \n\n\n " +
+                  "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any
                 );
-                popup.setHTML("Naziv lokacije: " + res.features[0].place_name_sr + " \n\n\n " +
-                  "\nKoordinate lokacije: " + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any);
+                popup.setHTML("<span style='font-weight: bold; font-size: 14px'> Naziv lokacije: </span> <br>" + res.features[0].place_name_sr + " \n\n\n " +
+                  "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any);
 
                 // Add the marker to the map
                 var oneMarker = new Marker(noviMarker)
@@ -368,11 +368,11 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
           noviMarker.style.height = '40px';
 
           var popup = new Popup({ offset: 25 }).setText(
-            "Naziv lokacije: " + se.detail.place_name_sr + " \n\n\n " +
-            "\nKoordinate lokacije: " + se.detail.center
+            "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + se.detail.place_name_sr + " \n\n\n " +
+            "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + se.detail.center
           );
-          popup.setHTML("Naziv lokacije: " + se.detail.place_name_sr + " \n\n\n " +
-            "\nKoordinate lokacije: " + se.detail.center);
+          popup.setHTML("<span style='font-weight: bold; font-size: 14px'>"+"Naziv lokacije: " + "</span> <br>" + se.detail.place_name_sr + " \r\n\n\n " +
+            "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + se.detail.center);
 
           // Add the marker to the map
           var oneMarker = new Marker(noviMarker)
