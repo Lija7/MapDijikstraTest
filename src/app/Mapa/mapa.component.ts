@@ -163,10 +163,10 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
                 noviMarker.style.height = '40px';
 
                 var popup = new Popup({ offset: 25 }).setText(
-                  "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + res.features[0].place_name_sr + " \n\n\n " +
+                  "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + konvert(res.features[0].place_name_sr) + " \n\n\n " +
                   "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any
                 );
-                popup.setHTML("<span style='font-weight: bold; font-size: 14px'> Naziv lokacije: </span> <br>" + res.features[0].place_name_sr + " \n\n\n " +
+                popup.setHTML("<span style='font-weight: bold; font-size: 14px'> Naziv lokacije: </span> <br>" + konvert(res.features[0].place_name_sr) + " \n\n\n " +
                   "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + [geolocate._userLocationDotMarker._lngLat.lng, geolocate._userLocationDotMarker._lngLat.lat] as any);
 
                 // Add the marker to the map
@@ -369,10 +369,10 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
           noviMarker.style.height = '40px';
 
           var popup = new Popup({ offset: 25 }).setText(
-            "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + se.detail.place_name_sr + " \n\n\n " +
+            "<span style='font-weight: bold; font-size: 14px'>" + "Naziv lokacije: " + "</span> <br>" + konvert(se.detail.place_name_sr) + " \n\n\n " +
             "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + se.detail.center
           );
-          popup.setHTML("<span style='font-weight: bold; font-size: 14px'>"+"Naziv lokacije: " + "</span> <br>" + se.detail.place_name_sr + " \r\n\n\n " +
+          popup.setHTML("<span style='font-weight: bold; font-size: 14px'>"+"Naziv lokacije: " + "</span> <br>" + konvert(se.detail.place_name_sr) + " \r\n\n\n " +
             "<br> <span style='font-weight: bold; font-size: 14px'> Koordinate lokacije: </span>" + se.detail.center);
 
           // Add the marker to the map
@@ -792,3 +792,73 @@ var getDistance = function (p1, p2) {
 
   return d; // returns the distance in meter
 };
+
+//metoda za konvertovanje iz cirilice u latinicu
+var konvert = function cyr_to_lat(aText) {
+	aText = aText.replace(/љ/g,'lj');
+	aText = aText.replace(/Љ/g,'Lj');
+                                                       
+	aText = aText.replace(/њ/g,'nj');
+	aText = aText.replace(/Њ/g,'Nj');
+                                                       
+	aText = aText.replace(/џ/g,'dž');
+	aText = aText.replace(/Џ/g,'Dž');
+
+	aText = aText.replace(/а/g,'a');
+	aText = aText.replace(/б/g,'b');
+	aText = aText.replace(/ц/g,'c');
+	aText = aText.replace(/ч/g,'č');
+	aText = aText.replace(/ћ/g,'ć');
+	aText = aText.replace(/д/g,'d');
+	aText = aText.replace(/ђ/g,'đ');
+	aText = aText.replace(/е/g,'e');
+	aText = aText.replace(/ф/g,'f');
+	aText = aText.replace(/г/g,'g');
+	aText = aText.replace(/х/g,'h');
+	aText = aText.replace(/и/g,'i');
+	aText = aText.replace(/ј/g,'j');
+	aText = aText.replace(/к/g,'k');
+	aText = aText.replace(/л/g,'l');
+	aText = aText.replace(/м/g,'m');
+	aText = aText.replace(/н/g,'n');
+	aText = aText.replace(/о/g,'o');
+	aText = aText.replace(/п/g,'p');
+	aText = aText.replace(/р/g,'r');
+	aText = aText.replace(/с/g,'s');
+	aText = aText.replace(/ш/g,'š');
+	aText = aText.replace(/т/g,'t');
+	aText = aText.replace(/у/g,'u');
+	aText = aText.replace(/в/g,'v');
+	aText = aText.replace(/з/g,'z');
+	aText = aText.replace(/ж/g,'ž');
+                                                      
+	aText = aText.replace(/А/g,'A');
+	aText = aText.replace(/Б/g,'B');
+	aText = aText.replace(/Ц/g,'C');
+	aText = aText.replace(/Ч/g,'Č');
+	aText = aText.replace(/Ћ/g,'Ć');
+	aText = aText.replace(/Д/g,'D');
+	aText = aText.replace(/Ђ/g,'Đ');
+	aText = aText.replace(/Е/g,'E');
+	aText = aText.replace(/Ф/g,'F');
+	aText = aText.replace(/Г/g,'G');
+	aText = aText.replace(/Х/g,'H');
+	aText = aText.replace(/И/g,'I');
+	aText = aText.replace(/Ј/g,'J');
+	aText = aText.replace(/К/g,'K');
+	aText = aText.replace(/Л/g,'L');
+	aText = aText.replace(/М/g,'M');
+	aText = aText.replace(/Н/g,'N');
+	aText = aText.replace(/О/g,'O');
+	aText = aText.replace(/П/g,'P');
+	aText = aText.replace(/Р/g,'R');
+	aText = aText.replace(/С/g,'S');
+	aText = aText.replace(/Ш/g,'Š');
+	aText = aText.replace(/Т/g,'T');
+	aText = aText.replace(/У/g,'U');
+	aText = aText.replace(/В/g,'V');
+	aText = aText.replace(/З/g,'Z');
+	aText = aText.replace(/Ж/g,'Ž');
+
+	return aText;
+}
