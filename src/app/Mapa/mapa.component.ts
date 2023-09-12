@@ -11,8 +11,6 @@ import maplibregl from "maplibre-gl";
 import { ListaLokacijaComponent } from '../ListaLokacija/lista-lokacija.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Route, Router } from '@angular/router';
-import  SerbianLatinCyrillicTranslateration from 'serbian-latin-cyrillic-transliteration'
-
 
 // export class ListaLokacija {
 //   koordinate: [number, number]
@@ -224,15 +222,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
                       // this.map.addControl(new LoadingIndicatorControl(this.directions));
                       // this.directions.removeWaypoint(markerForRemove + 1);
   
-                    
                   }
-
-                  
-
-
-
-
-
                 });
 
 
@@ -247,10 +237,6 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
                   popup.remove();
                 });
               })
-
-
-
-
             }
             else {
               console.log(103)
@@ -267,11 +253,6 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
               this.listaLokacijaZaPrikaz.unshift(lokacijaZaPrikaz)
               this.listaLokacijaZaPrikaz.push(lokacijaZaPrikaz)
             }
-
-
-
-
-
           }
           else {
             console.log(104)
